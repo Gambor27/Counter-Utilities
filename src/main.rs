@@ -164,6 +164,33 @@ impl BlackjackApp {
         player_hand.add_card(self.deck.deal_card().unwrap());
         dealer_hand.add_card(self.deck.deal_card().unwrap());
 
+        
+        if player_hand.total() == 21 && dealer_hand.total() == 21 {
+            self.last_game_result = Some(GameResult::Push);
+            self.pushes += 1;
+            self.games_played += 1;
+            let log = format!("*** Game {} ***\nPlayer's hand: {} (Total: {})\nDealer's hand: {} (Total: {})\nBoth have Blackjack! Push!\n", 
+                self.games_played, player_hand.display(), player_hand.total(), dealer_hand.display(), dealer_hand.total());
+            self.append_log(&log);
+            return;
+        } else if dealer_hand.total() == 21 {
+            self.last_game_result = Some(GameResult::DealerWin);
+            self.losses += 1;
+            self.games_played += 1;
+            let log = format!("*** Game {} ***\nPlayer's hand: {} (Total: {})\nDealer's hand: {} (Total: {})\nBlackjack! Dealer wins!\n", 
+                self.games_played, player_hand.display(), player_hand.total(), dealer_hand.display(), dealer_hand.total());
+            self.append_log(&log);
+            return;
+        } else if player_hand.total() == 21 {
+            self.last_game_result = Some(GameResult::PlayerWin);
+            self.wins += 1;
+            self.games_played += 1;
+            let log = format!("*** Game {} ***\nPlayer's hand: {} (Total: {})\nDealer shows: {}\nBlackjack! Player wins!\n", 
+                self.games_played, player_hand.display(), player_hand.total(), dealer_hand.cards[0].name());
+            self.append_log(&log);
+            return;
+        }
+
         let mut log = String::new();
         log.push_str(&format!("*** Game {} ***\n", self.games_played + 1));
         log.push_str(&format!("Player's hand: {} (Total: {})\n", player_hand.display(), player_hand.total()));
@@ -228,7 +255,6 @@ impl eframe::App for BlackjackApp {
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.heading("Blackjack Simulator");
             if ui.button("Play Game").clicked() {
-
                 self.play_game();
             }
             if let Some(result) = &self.last_game_result {

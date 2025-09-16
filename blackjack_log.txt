@@ -39,3 +39,247 @@ Dealer hits: K♦ (Total: 16)
 Dealer hits: Q♦ (Total: 26)
 Dealer busts!
 
+*** Game 1 ***
+Player's hand: 4♦, Q♦ (Total: 14)
+Dealer shows: 9♥
+Player hits: 3♦ (Total: 17)
+Player stands.
+Dealer stands.
+Dealer's hand: 9♥, 9♥ (Total: 18)
+Dealer wins!
+
+*** Game 2 ***
+Player's hand: 4♠, 6♠ (Total: 10)
+Dealer shows: 10♣
+Player hits: K♥ (Total: 20)
+Player stands.
+Dealer hits: K♠ (Total: 26)
+Dealer busts!
+
+*** Game 3 ***
+Player's hand: 9♥, J♣ (Total: 19)
+Dealer shows: A♠
+Player stands.
+Dealer hits: 2♦ (Total: 16)
+Dealer hits: 7♠ (Total: 13)
+Dealer hits: A♥ (Total: 14)
+Dealer hits: 6♦ (Total: 20)
+Dealer stands.
+Dealer's hand: A♠, 3♥, 2♦, 7♠, A♥, 6♦ (Total: 20)
+Dealer wins!
+
+*** Game 4 ***
+Player's hand: 3♣, J♦ (Total: 13)
+Dealer shows: J♦
+Player hits: 4♦ (Total: 17)
+Player stands.
+Dealer stands.
+Dealer's hand: J♦, Q♣ (Total: 20)
+Dealer wins!
+
+*** Game 5 ***
+Player's hand: 8♠, 4♦ (Total: 12)
+Dealer shows: K♠
+Player hits: 4♥ (Total: 16)
+Player hits: A♣ (Total: 17)
+Player stands.
+Dealer stands.
+Dealer's hand: K♠, J♣ (Total: 20)
+Dealer wins!
+
+*** Game 1 ***
+Player's hand: J♥, 3♥ (Total: 13)
+Dealer shows: 8♥
+Player hits: 7♣ (Total: 20)
+Player stands.
+Dealer hits: 6♠ (Total: 22)
+Dealer busts!
+
+*** Game 2 ***
+Player's hand: 4♥, 10♦ (Total: 14)
+Dealer shows: 5♥
+Player hits: 8♠ (Total: 22)
+Player busts!
+
+*** Game 3 ***
+Player's hand: Q♦, 10♣ (Total: 20)
+Dealer shows: 7♥
+Player stands.
+Dealer stands.
+Dealer's hand: 7♥, K♠ (Total: 17)
+Player wins!
+
+*** Game 4 ***
+Player's hand: 5♣, 8♥ (Total: 13)
+Dealer shows: 3♣
+Player hits: J♠ (Total: 23)
+Player busts!
+
+*** Game 5 ***
+Player's hand: 8♣, K♥ (Total: 18)
+Dealer shows: K♦
+Player stands.
+Dealer stands.
+Dealer's hand: K♦, K♣ (Total: 20)
+Dealer wins!
+
+*** Game 6 ***
+Player's hand: 5♠, K♠ (Total: 15)
+Dealer shows: 10♠
+Player hits: K♣ (Total: 25)
+Player busts!
+
+*** Game 7 ***
+Player's hand: 5♥, 8♦ (Total: 13)
+Dealer shows: J♦
+Player hits: 8♦ (Total: 21)
+Player stands.
+Dealer hits: 8♥ (Total: 20)
+Dealer stands.
+Dealer's hand: J♦, 2♠, 8♥ (Total: 20)
+Player wins!
+
+*** Game 8 ***
+Player's hand: 7♠, 4♠ (Total: 11)
+Dealer shows: 6♠
+Player hits: 10♣ (Total: 21)
+Player stands.
+Dealer hits: J♠ (Total: 22)
+Dealer busts!
+
+*** Game 9 ***
+Player's hand: 6♠, 7♣ (Total: 13)
+Dealer shows: 2♣
+Player hits: 3♥ (Total: 16)
+Player hits: 3♠ (Total: 19)
+Player stands.
+Dealer hits: 4♣ (Total: 17)
+Dealer stands.
+Dealer's hand: 2♣, A♠, 4♣ (Total: 17)
+Player wins!
+
+*** Game 10 ***
+Player's hand: 3♠, 8♥ (Total: 11)
+Dealer shows: K♠
+Player hits: 4♥ (Total: 15)
+Player hits: A♥ (Total: 16)
+Player hits: J♦ (Total: 26)
+Player busts!
+
+*** Game 11 ***
+Player's hand: 10♦, J♠ (Total: 20)
+Dealer shows: 9♥
+Player stands.
+Dealer stands.
+Dealer's hand: 9♥, A♣ (Total: 20)
+Push!
+
+*** Game 12 ***
+Player's hand: 2♥, A♦ (Total: 13)
+Dealer shows: K♥
+Player hits: 4♣ (Total: 17)
+Player stands.
+Dealer stands.
+Dealer's hand: K♥, 10♠ (Total: 20)
+Dealer wins!
+
+*** Game 13 ***
+Player's hand: Q♥, 4♣ (Total: 14)
+Dealer shows: J♦
+Player hits: 6♦ (Total: 20)
+Player stands.
+Dealer stands.
+Dealer's hand: J♦, Q♥ (Total: 20)
+Push!
+
+*** Game 14 ***
+Player's hand: 5♠, 3♦ (Total: 8)
+Dealer's hand: J♣, A♥ (Total: 21)
+Blackjack! Dealer wins!
+
+*** Game 15 ***
+Player's hand: 6♦, 2♦ (Total: 8)
+Dealer shows: 2♣
+Player hits: 3♦ (Total: 11)
+Player hits: A♥ (Total: 12)
+Player hits: 10♦ (Total: 22)
+Player busts!
+
+*** Game 16 ***
+Player's hand: Q♣, Q♥ (Total: 20)
+Dealer shows: 3♠
+Player stands.
+Dealer hits: J♠ (Total: 19)
+Dealer stands.
+Dealer's hand: 3♠, 6♦, J♠ (Total: 19)
+Player wins!
+
+*** Game 17 ***
+Player's hand: 9♥, 9♣ (Total: 18)
+Dealer shows: Q♥
+Player stands.
+Dealer stands.
+Dealer's hand: Q♥, 7♥ (Total: 17)
+Player wins!
+
+*** Game 18 ***
+Player's hand: J♠, 4♣ (Total: 14)
+Dealer shows: 6♣
+Player hits: Q♠ (Total: 24)
+Player busts!
+
+*** Game 19 ***
+Player's hand: 6♣, 6♥ (Total: 12)
+Dealer shows: Q♣
+Player hits: 4♣ (Total: 16)
+Player hits: 4♦ (Total: 20)
+Player stands.
+Dealer hits: 9♥ (Total: 21)
+Dealer stands.
+Dealer's hand: Q♣, 2♠, 9♥ (Total: 21)
+Dealer wins!
+
+*** Game 20 ***
+Player's hand: 2♦, 5♠ (Total: 7)
+Dealer shows: 5♥
+Player hits: 4♥ (Total: 11)
+Player hits: 7♦ (Total: 18)
+Player stands.
+Dealer hits: K♦ (Total: 25)
+Dealer busts!
+
+*** Game 21 ***
+Player's hand: K♠, 4♥ (Total: 14)
+Dealer shows: 4♠
+Player hits: K♦ (Total: 24)
+Player busts!
+
+*** Game 22 ***
+Player's hand: K♣, 5♦ (Total: 15)
+Dealer shows: 5♠
+Player hits: 9♠ (Total: 24)
+Player busts!
+
+*** Game 23 ***
+Player's hand: 6♦, J♠ (Total: 16)
+Dealer shows: A♠
+Player hits: 4♦ (Total: 20)
+Player stands.
+Dealer hits: K♦ (Total: 12)
+Dealer hits: 8♠ (Total: 20)
+Dealer stands.
+Dealer's hand: A♠, A♦, K♦, 8♠ (Total: 20)
+Push!
+
+*** Game 24 ***
+Player's hand: Q♣, 4♦ (Total: 14)
+Dealer shows: 7♣
+Player hits: K♣ (Total: 24)
+Player busts!
+
+*** Game 25 ***
+Player's hand: 6♣, 10♦ (Total: 16)
+Dealer shows: 8♠
+Player hits: 6♥ (Total: 22)
+Player busts!
+
