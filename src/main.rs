@@ -1,5 +1,6 @@
 use eframe::egui;
 use rand::{Rng};
+use serde::de;
 //use serde::de;
 use std::fs::OpenOptions;
 use std::io::Write;
@@ -81,6 +82,18 @@ impl Hand {
         self.total() > 21
     }
 
+    fn is_soft(&self) -> bool {
+        let mut total = 0;
+        let mut aces = 0;
+        for card in &self.cards {
+            total += card.value();
+            if card.rank == 1 {
+                aces += 1;
+            }
+        }
+        aces > 0 && total <= 21
+    }
+
     fn display(&self) -> String {
         self.cards.iter()
             .map(|c| c.name())
@@ -127,6 +140,7 @@ enum GameResult {
     DealerWin,
     Push,
     PlayerBlackjack,
+    Surrender
 }
 
 struct BlackjackApp {
@@ -138,6 +152,8 @@ struct BlackjackApp {
     deck: Deck,
     bankroll: f64,
     bet_amount: f64,
+    player_turn: bool,
+    strategy: Box<dyn PlayStrategy>,
 }
 
 impl Default for BlackjackApp {
@@ -153,7 +169,113 @@ impl Default for BlackjackApp {
             deck: new_deck,
             bankroll: 1000.0,
             bet_amount: 10.0,
+            player_turn: true,
+            strategy: Box::new(BasicStrategy{}),
         }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+enum Action {
+    Hit,
+    Stand,
+    DoubleDown,
+    Split,
+    Surrender,
+}
+
+trait PlayStrategy {
+    fn determine_action(&self, player_hand: &Hand, dealer_upcard: &Card) -> Action;
+    
+}
+
+
+struct BasicStrategy;
+
+impl PlayStrategy for BasicStrategy {
+    fn determine_action(&self, player_hand: &Hand, dealer_upcard: &Card) -> Action {
+        let player_total = player_hand.total();
+        let dealer_value = dealer_upcard.value();
+        
+
+        if player_hand.cards.len() == 2 {
+            if player_hand.is_soft() {
+                if player_hand.cards[0].rank == 1 && player_hand.cards[1].rank == 1 {
+                    return Action::Split;
+                }
+                if player_total == 19 && dealer_value == 6 {
+                    return Action::DoubleDown;
+                }
+                if player_total == 18 && dealer_value <= 6 {
+                    return Action::DoubleDown;
+                }
+                if player_total == 17 && (3..=6).contains(&dealer_value) {
+                    return Action::DoubleDown;
+                }
+                if player_total == 16 || player_total == 15 && (4..=6).contains(&dealer_value) {
+                    return Action::DoubleDown;
+                }
+                if player_total == 14 || player_total == 13 && (5..=6).contains(&dealer_value) {
+                    return Action::DoubleDown;
+                }    
+            }        
+            if player_hand.cards[0].rank == player_hand.cards[1].rank {
+                if player_total == 18 {
+                    if dealer_value < 7 || dealer_value <= 10 {
+                        return Action::Split;
+                    }
+                }
+                if player_total == 16 {
+                        return Action::Split;
+                    }
+                if player_total == 14 && dealer_value <= 7 {
+                        return Action::Hit;
+                    }
+                if player_total == 12 && (3..= 7).contains(&dealer_value) {
+                        return Action::Hit;
+                    }
+                if player_total == 6 || player_total == 4 && (4..= 7).contains(&dealer_value) {
+                        return Action::Hit;
+                    }
+                }
+
+            if player_total == 16 && (9..= 11).contains(&dealer_value) {
+                return Action::Surrender;
+            }
+            if player_total == 15 && dealer_value == 10 {
+                return Action::Surrender;
+            }
+            if player_total == 11 {
+                return Action::DoubleDown;
+            }
+            if player_total == 10 && dealer_value < 10 {
+                return Action::DoubleDown;
+            }
+            if player_total == 9 && (3..= 6).contains(&dealer_value) {
+                return Action::DoubleDown;
+            }
+        }
+
+        if player_hand.is_soft() {
+            if player_total <= 17 {
+                return Action::Hit;
+            }
+            if player_total == 18 && dealer_value >= 9 {
+                return Action::Hit;
+            }
+        }
+
+        if player_total <= 11 {
+            return Action::Hit;
+        }
+        if player_total == 12 && (dealer_value < 4 || dealer_value > 6) {
+            return Action::Hit;
+        }
+        if (13..= 16).contains(&player_total) && dealer_value >= 7 {
+            return Action::Hit;
+        }
+
+        return Action::Stand;
     }
 }
 
@@ -202,13 +324,13 @@ impl BlackjackApp {
             self.append_log(&log);
             self.pay_bet(&GameResult::PlayerBlackjack);
             return;
-        }
+        }        
 
         let mut log = String::new();
         log.push_str(&format!("*** Game {} ***\n", self.games_played + 1));
         log.push_str(&format!("Player's hand: {} (Total: {})\n", player_hand.display(), player_hand.total()));
         log.push_str(&format!("Dealer shows: {}\n", dealer_hand.cards[0].name()));
-
+/*
         while player_hand.total() < 17 {
             player_hand.add_card(self.deck.deal_card().unwrap());
             log.push_str(&format!("Player hits: {} (Total: {})\n", player_hand.cards.last().unwrap().name(), player_hand.total()));
@@ -220,9 +342,63 @@ impl BlackjackApp {
                 self.append_log(&log);
                 self.pay_bet(&GameResult::DealerWin);
                 return;
-            }                       
+            }     
+            
+        } 
+        */
+        while self.player_turn {
+            let action = self.strategy.determine_action(&player_hand, &dealer_hand.cards[0]);
+            match action {
+                Action::Hit => {
+                    player_hand.add_card(self.deck.deal_card().unwrap());
+                    log.push_str(&format!("Player hits: {} (Total: {})\n", player_hand.cards.last().unwrap().name(), player_hand.total()));
+                    if player_hand.is_busted() {
+                        log.push_str("Player busts!\n");
+                        self.last_game_result = Some(GameResult::DealerWin);
+                        self.losses += 1;
+                        self.games_played += 1;
+                        self.append_log(&log);
+                        self.pay_bet(&GameResult::DealerWin);
+                        return;                                         
+                        }
+                }
+                Action::DoubleDown => {
+                    player_hand.add_card(self.deck.deal_card().unwrap());
+                    log.push_str(&format!("Player doubles down: {} (Total: {})\n", player_hand.cards.last().unwrap().name(), player_hand.total()));
+                    self.bet_amount *= 2.0;
+                    if player_hand.is_busted() {
+                        log.push_str("Player busts!\n");
+                        self.last_game_result = Some(GameResult::DealerWin);
+                        self.losses += 1;
+                        self.games_played += 1;
+                        self.append_log(&log);
+                        self.pay_bet(&GameResult::DealerWin);
+                        return;                                         
+                        }
+                    self.player_turn = false; // End turn after double down
+                }
+                Action::Stand => {
+                    log.push_str("Player stands.\n");
+                    self.player_turn = false;
+                }
+                Action::Surrender => {
+                    log.push_str("Player surrenders.\n");
+                    self.last_game_result = Some(GameResult::Surrender);
+                    self.losses += 1;
+                    self.games_played += 1;
+                    self.append_log(&log);
+                    self.pay_bet(&GameResult::Surrender);
+                    return;
+                }
+                Action::Split => {
+                    // For simplicity, we won't implement splitting in this version
+                    log.push_str("Player chooses to split, but splitting is not implemented. Player stands.\n");
+                    self.player_turn = false;
+                }
+
+            }
         }
-        log.push_str("Player stands.\n");
+        
         while dealer_hand.total() < 17 {
             dealer_hand.add_card(self.deck.deal_card().unwrap());
             log.push_str(&format!("Dealer hits: {} (Total: {})\n", dealer_hand.cards.last().unwrap().name(), dealer_hand.total()));
@@ -271,6 +447,7 @@ impl BlackjackApp {
             GameResult::DealerWin => self.bankroll -= self.bet_amount,
             GameResult::Push => {},
             GameResult::PlayerBlackjack => self.bankroll += self.bet_amount * 1.5,
+            GameResult::Surrender => self.bankroll -= self.bet_amount / 2.0,
         }
     }    
 }
@@ -306,6 +483,7 @@ impl eframe::App for BlackjackApp {
                     GameResult::DealerWin => "Dealer Wins!",
                     GameResult::Push => "Push!",
                     GameResult::PlayerBlackjack => "Player Wins with Blackjack!",
+                    GameResult::Surrender => "Player Surrendered",
                 };
                 ui.label(format!("Last Game Result: {}", result_str));
             } else {
