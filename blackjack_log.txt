@@ -1,0 +1,41 @@
+*** Game 1 ***
+Player's hand: K♠, J♠ (Total: 20)
+Dealer shows: Q♠
+Player stands.
+Dealer stands.
+Dealer's hand: Q♠, 10♠ (Total: 20)
+Push!
+
+*** Game 2 ***
+Player's hand: 9♠, 7♠ (Total: 16)
+Dealer shows: 8♠
+Player hits: 5♠ (Total: 21)
+Player stands.
+Dealer hits: 4♠ (Total: 18)
+Dealer stands.
+Dealer's hand: 8♠, 6♠, 4♠ (Total: 18)
+Player wins!
+
+*** Game 3 ***
+Player's hand: 3♠, A♠ (Total: 14)
+Dealer shows: 2♠
+Player hits: Q♣ (Total: 14)
+Player hits: J♣ (Total: 24)
+Player busts!
+
+*** Game 4 ***
+Player's hand: 10♣, 8♣ (Total: 18)
+Dealer shows: 9♣
+Player stands.
+Dealer hits: 6♣ (Total: 22)
+Dealer busts!
+
+*** Game 5 ***
+Player's hand: 5♣, 3♣ (Total: 8)
+Dealer shows: 4♣
+Player hits: A♣ (Total: 19)
+Player stands.
+Dealer hits: K♦ (Total: 16)
+Dealer hits: Q♦ (Total: 26)
+Dealer busts!
+

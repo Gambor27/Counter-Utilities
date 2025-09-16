@@ -135,13 +135,15 @@ struct BlackjackApp {
 
 impl Default for BlackjackApp {
     fn default() -> Self {
+        let mut new_deck = Deck::new(6);
+        new_deck.shuffle();
         Self {
             last_game_result: None,            
             games_played: 0,
             wins: 0,
             losses: 0,
             pushes: 0,
-            deck: Deck::new(6),
+            deck: new_deck,
         }
     }
 }
