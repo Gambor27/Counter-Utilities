@@ -73,6 +73,10 @@ impl Hand {
         total
     }
 
+    fn is_blackjack(&self) -> bool {
+        self.cards.len() == 2 && self.total() == 21
+    }
+
     fn is_busted(&self) -> bool {
         self.total() > 21
     }
@@ -117,11 +121,12 @@ impl Deck {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 enum GameResult {
     PlayerWin,
     DealerWin,
     Push,
+    PlayerBlackjack,
 }
 
 struct BlackjackApp {
@@ -131,6 +136,8 @@ struct BlackjackApp {
     losses: u32,
     pushes: u32,
     deck: Deck,
+    bankroll: f64,
+    bet_amount: f64,
 }
 
 impl Default for BlackjackApp {
@@ -144,6 +151,8 @@ impl Default for BlackjackApp {
             losses: 0,
             pushes: 0,
             deck: new_deck,
+            bankroll: 1000.0,
+            bet_amount: 10.0,
         }
     }
 }
@@ -164,8 +173,10 @@ impl BlackjackApp {
         player_hand.add_card(self.deck.deal_card().unwrap());
         dealer_hand.add_card(self.deck.deal_card().unwrap());
 
+
+
         
-        if player_hand.total() == 21 && dealer_hand.total() == 21 {
+        if player_hand.is_blackjack() && dealer_hand.is_blackjack() {
             self.last_game_result = Some(GameResult::Push);
             self.pushes += 1;
             self.games_played += 1;
@@ -173,21 +184,23 @@ impl BlackjackApp {
                 self.games_played, player_hand.display(), player_hand.total(), dealer_hand.display(), dealer_hand.total());
             self.append_log(&log);
             return;
-        } else if dealer_hand.total() == 21 {
+        } else if dealer_hand.is_blackjack() {
             self.last_game_result = Some(GameResult::DealerWin);
             self.losses += 1;
             self.games_played += 1;
             let log = format!("*** Game {} ***\nPlayer's hand: {} (Total: {})\nDealer's hand: {} (Total: {})\nBlackjack! Dealer wins!\n", 
                 self.games_played, player_hand.display(), player_hand.total(), dealer_hand.display(), dealer_hand.total());
             self.append_log(&log);
+            self.pay_bet(&GameResult::DealerWin);
             return;
-        } else if player_hand.total() == 21 {
-            self.last_game_result = Some(GameResult::PlayerWin);
+        } else if player_hand.is_blackjack() {
+            self.last_game_result = Some(GameResult::PlayerBlackjack);
             self.wins += 1;
             self.games_played += 1;
             let log = format!("*** Game {} ***\nPlayer's hand: {} (Total: {})\nDealer shows: {}\nBlackjack! Player wins!\n", 
                 self.games_played, player_hand.display(), player_hand.total(), dealer_hand.cards[0].name());
             self.append_log(&log);
+            self.pay_bet(&GameResult::PlayerBlackjack);
             return;
         }
 
@@ -205,6 +218,7 @@ impl BlackjackApp {
                 self.losses += 1;
                 self.games_played += 1;
                 self.append_log(&log);
+                self.pay_bet(&GameResult::DealerWin);
                 return;
             }                       
         }
@@ -218,6 +232,7 @@ impl BlackjackApp {
                 self.wins += 1;
                 self.games_played += 1;
                 self.append_log(&log);
+                self.pay_bet(&GameResult::PlayerWin);
                 return;
             }
         }
@@ -236,8 +251,9 @@ impl BlackjackApp {
             self.last_game_result = Some(GameResult::Push);
             self.pushes += 1;
         }
-        self.games_played += 1;
+        self.games_played += 1;        
         self.append_log(&log);
+        self.pay_bet(&self.last_game_result.clone().unwrap());
     }
 
     fn append_log(&self, log: &str) {
@@ -247,27 +263,56 @@ impl BlackjackApp {
             .open("blackjack_log.txt")
             .unwrap();
         writeln!(file, "{}", log).unwrap();
+    }
+
+    fn pay_bet(&mut self, result: &GameResult) {
+        match result {
+            GameResult::PlayerWin => self.bankroll += self.bet_amount,
+            GameResult::DealerWin => self.bankroll -= self.bet_amount,
+            GameResult::Push => {},
+            GameResult::PlayerBlackjack => self.bankroll += self.bet_amount * 1.5,
+        }
     }    
 }
 
 impl eframe::App for BlackjackApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
+            let can_play = self.bankroll >= self.bet_amount;
             ui.heading("Blackjack Simulator");
-            if ui.button("Play Game").clicked() {
+            if ui.add_enabled(can_play, egui::Button::new("Play Game")).clicked() {
                 self.play_game();
+            }
+            if ui.add_enabled(can_play, egui::Button::new("Play 1000 Games")).clicked() {
+                for _ in 0..1000 {
+                    if self.bankroll < self.bet_amount {
+                    ui.label("Insufficient bankroll to continue playing.");
+                    return;
+                }
+                    self.play_game();
+                }
+            }
+            if ui.button("Reset Bankroll").clicked() {
+                self.bankroll = 1000.0;
+                self.games_played = 0;
+                self.wins = 0;
+                self.losses = 0;
+                self.pushes = 0;
+                self.last_game_result = None;
             }
             if let Some(result) = &self.last_game_result {
                 let result_str = match result {
                     GameResult::PlayerWin => "Player Wins!",
                     GameResult::DealerWin => "Dealer Wins!",
                     GameResult::Push => "Push!",
+                    GameResult::PlayerBlackjack => "Player Wins with Blackjack!",
                 };
                 ui.label(format!("Last Game Result: {}", result_str));
             } else {
                 ui.label("No games played yet.");
             }
             ui.separator();
+            ui.label(format!("Bankroll: ${:.2}", self.bankroll));
             ui.label(format!("Games Played: {}", self.games_played));
             ui.label(format!("Wins: {}", self.wins));
             ui.label(format!("Losses: {}", self.losses));
