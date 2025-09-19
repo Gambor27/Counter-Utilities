@@ -52,10 +52,11 @@ struct Hand {
     split: bool,
     first_action: bool,
     live: bool,
+    stood: bool,
 }
 impl Hand {
     fn new() -> Self {
-        Self { cards: Vec::new(), doubled: false, split: false, first_action: true, live: true }        
+        Self { cards: Vec::new(), doubled: false, split: false, first_action: true, live: true, stood: false }        
     }
 
     fn add_card(&mut self, card: Card) {
@@ -348,24 +349,18 @@ impl BlackjackApp {
                     log.push_str(&format!("Player doubles down: {} (Total: {})\n", player_hand.cards.last().unwrap().name(), player_hand.total()));
                     player_hand.doubled = true;
                     player_hand.live = false;
+                    player_hand.stood = true;
                     if player_hand.is_busted() {
                         log.push_str("Player busts!\n");
                         self.last_game_result = Some(GameResult::DoubledLose);
                         self.losses += 1;
-                        self.games_played += 1;
-                        self.append_log(&log);
-                        self.pay_bet(&GameResult::DoubledLose);                        
-                        }
+                    }  
                 }
                 Action::Surrender => {
                     log.push_str("Player surrenders.\n");
                     self.last_game_result = Some(GameResult::Surrender);
                     self.losses += 1;
-                    self.games_played += 1;
-                    self.append_log(&log);
-                    self.pay_bet(&GameResult::Surrender);
                     player_hand.live = false;
-                    return;
                 }
                 Action::Split => {
                     // For simplicity, we won't implement splitting in this version
@@ -390,15 +385,13 @@ impl BlackjackApp {
                         log.push_str("Player busts!\n");
                         self.last_game_result = Some(GameResult::DealerWin);
                         self.losses += 1;
-                        self.games_played += 1;
-                        self.append_log(&log);
-                        self.pay_bet(&GameResult::DealerWin);
                         player_hand.live = false;                                         
                         }
                 }
                 Action::Stand => {
                     log.push_str("Player stands.\n");
                     player_hand.live = false;
+                    player_hand.stood = true;
                 }
                 _ => {
                     log.push_str("Invalid action during main turn. Player stands.\n");
@@ -406,7 +399,7 @@ impl BlackjackApp {
             }
         }
         
-        while dealer_hand.total() < 17 {
+        while dealer_hand.total() < 17 && player_hand.stood {
             dealer_hand.add_card(self.deck.deal_card().unwrap());
             log.push_str(&format!("Dealer hits: {} (Total: {})\n", dealer_hand.cards.last().unwrap().name(), dealer_hand.total()));
             if dealer_hand.is_busted() {
@@ -421,7 +414,7 @@ impl BlackjackApp {
         }
         log.push_str("Dealer stands.\n");
         log.push_str(&format!("Dealer's hand: {} (Total: {})\n", dealer_hand.display(), dealer_hand.total()));
-        if player_hand.live {
+        if player_hand.stood {
             if player_hand.total() > dealer_hand.total() {
                 log.push_str("Player wins!\n");
                 if player_hand.doubled {
@@ -444,9 +437,10 @@ impl BlackjackApp {
                 self.pushes += 1;
             }
         }
-        self.games_played += 1;        
-        self.append_log(&log);
+        self.games_played += 1;
         self.pay_bet(&self.last_game_result.clone().unwrap());
+        self.append_log(&log);
+
     }
 
     fn append_log(&self, log: &str) {
